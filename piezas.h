@@ -1,12 +1,15 @@
 #ifndef PIEZAS_H
 #define PIEZAS_H
 
-#include "piezas_global.h"
-
-class PIEZAS_EXPORT Piezas
-{
-public:
-    Piezas();
+struct Pieza {
+    unsigned short forma;
+    int x;
+    int y;
+    int tipo;
 };
+
+// --- Prototipos de funciones ---
+Pieza* generarPiezaAleatoria(int anchoTablero);
+void rotarPieza(Pieza* p);
 
 #endif // PIEZAS_H
