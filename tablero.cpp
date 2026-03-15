@@ -111,15 +111,16 @@ void imprimirTodo(Tablero* t, Pieza* p) {
             unsigned char byteTablero = t->matriz[i][j];
             unsigned char byteParaImprimir = byteTablero;
 
-            if (i >= p->y && i < p->y + 4)
-            {
-                int filaRelativaPieza = i - p->y;
+            int filaRelativaPieza = i - p->y;
 
+            if (filaRelativaPieza >= 0 && filaRelativaPieza < 4)
+            {
                 unsigned short mascaraFila = (p->forma >> (12 - (filaRelativaPieza * 4))) & 0xF;
 
                 for (int bitPieza = 0; bitPieza < 4; bitPieza++)
                 {
                     int colGlobalPieza = p->x + bitPieza;
+
                     if (colGlobalPieza >= j * 8 && colGlobalPieza < (j + 1) * 8)
                     {
                         if ((mascaraFila >> (3 - bitPieza)) & 1)
@@ -130,7 +131,6 @@ void imprimirTodo(Tablero* t, Pieza* p) {
                     }
                 }
             }
-
             for (int bit = 7; bit >= 0; bit--)
             {
                 if ((byteParaImprimir >> bit) & 1) cout << "#";
@@ -141,4 +141,35 @@ void imprimirTodo(Tablero* t, Pieza* p) {
     }
     for (int k = 0; k < t->ancho + 2; k++) cout << "-";
     cout << endl;
+}
+
+bool validarPosicion(Tablero* t, Pieza* p)
+{
+    for (int f = 0; f < 4; f++)
+    {
+        for (int c = 0; c < 4; c++)
+        {
+            if ((p->forma >> (15 - (f * 4 + c))) & 1)
+            {
+                int filaGlobal = p->y + f;
+                int colGlobal = p->x + c;
+
+                if (colGlobal < 0 || colGlobal >= t->ancho || filaGlobal >= t->alto)
+                {
+                    return false;
+                }
+
+                if (filaGlobal >= 0)
+                {
+                    int byteIdx = colGlobal / 8;
+                    int bitIdx = 7 - (colGlobal % 8);
+                    if ((t->matriz[filaGlobal][byteIdx] >> bitIdx) & 1)
+                    {
+                        return false;
+                    }
+                }
+            }
+        }
+    }
+    return true;
 }

@@ -6,8 +6,8 @@
 
 using namespace std;
 
-int main() {
-    // 1. Inicialización de la semilla para números aleatorios
+int main()
+{
     srand(time(0));
 
     int ancho, alto;
@@ -17,11 +17,13 @@ int main() {
 
     Tablero* miTablero = crearTablero(ancho, alto);
     Pieza* piezaActual = generarPiezaAleatoria(ancho);
+    piezaActual->y = -1;
 
     char entrada = ' ';
     bool jugando = true;
 
-    while (jugando) {
+    while (jugando)
+    {
         system("cls");
 
         imprimirTodo(miTablero, piezaActual);
@@ -31,15 +33,39 @@ int main() {
         cin >> entrada;
         entrada = toupper(entrada);
 
-        switch (entrada) {
-        case 'A': piezaActual->x--; break;
-        case 'D': piezaActual->x++; break;
-        case 'W':
-            rotarPieza(piezaActual);
-            break;
-        case 'S': piezaActual->y++; break;
-        case 'Q': jugando = false; break;
-        default: break;
+        switch (entrada)
+        {
+            case 'A':
+            {
+                piezaActual->x--;
+                if (!validarPosicion(miTablero, piezaActual))
+                    piezaActual->x++;
+                break;
+            }
+            case 'D':
+            {
+                piezaActual->x++;
+                if (!validarPosicion(miTablero, piezaActual))
+                piezaActual->x--;
+                break;
+            }
+            case 'W':
+            {
+                unsigned short formaAnterior = piezaActual->forma;
+                rotarPieza(piezaActual);
+                if (!validarPosicion(miTablero, piezaActual))
+                piezaActual->forma = formaAnterior;
+                break;
+            }
+            case 'S':
+            {
+                piezaActual->y++;
+                if (!validarPosicion(miTablero, piezaActual))
+                    piezaActual->y--;
+                break;
+            }
+            case 'Q': jugando = false; break;
+            default: break;
         }
 
     }

@@ -3,45 +3,51 @@
 #include <ctime>
 using namespace std;
 
-
-const unsigned short FORMAS[7] =
-    {
-    0x0F00, // I: 0000 1111 0000 0000 (Fila 1 completa)
-    0xCC00, // O: 1100 1100 0000 0000 (Cuadrado 2x2 arriba)
-    0x4E00, // T: 0100 1110 0000 0000
-    0x4460, // J: 0100 0100 0110 0000 (L invertida)
-    0x2260  // L: 0010 0010 0110 0000 (L estándar)
+const unsigned short FORMAS[5] =
+{
+    0x0F00, // Tipo 0 (I)
+    0x0660, // Tipo 1 (O)
+    0xE400, // Tipo 2 (T)
+    0x8E00, // Tipo 3 (J)
+    0x2E00  // Tipo 4 (L)
 };
 
 Pieza* generarPiezaAleatoria(int anchoTablero)
 {
     Pieza* p = new Pieza;
-
     p->tipo = rand() % 5;
     p->forma = FORMAS[p->tipo];
-
     p->x = (anchoTablero / 2) - 2;
-    p->y = 0;
-
+    p->y = -1;
     return p;
 }
 
 void rotarPieza(Pieza* p)
 {
     unsigned short nuevaForma = 0;
-    for (int f = 0; f < 4; f++)
+
+    if (p->tipo == 1) return;
+
+    if (p->tipo == 0)
     {
-        for (int c = 0; c < 4; c++)
+        if (p->forma == 0x0F00) nuevaForma = 0x4444;
+        else nuevaForma = 0x0F00;
+    }
+    else
+    {
+        for (int f = 0; f < 3; f++)
         {
-            int posOriginal = 15 - (f * 4 + c);
-            if ((p->forma >> posOriginal) & 1)
+            for (int c = 0; c < 3; c++)
             {
-                int f_new = c;
-                int c_new = 3 - f;
-                int posNueva = 15 - (f_new * 4 + c_new);
-                nuevaForma |= (1 << posNueva);
+                if ((p->forma >> (15 - (f * 4 + c))) & 1)
+                {
+                    int nF = c;
+                    int nC = 2 - f;
+                    nuevaForma |= (1 << (15 - (nF * 4 + nC)));
+                }
             }
         }
     }
+
     p->forma = nuevaForma;
 }

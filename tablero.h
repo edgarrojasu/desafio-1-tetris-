@@ -16,6 +16,7 @@ void liberarTablero(Tablero* t);
 void imprimirTodo(Tablero* t, Pieza* p);
 int anchura();
 int altura();
+bool validarPosicion(Tablero* t, Pieza* p);
 
 
 #endif
