@@ -5,11 +5,11 @@ using namespace std;
 
 const unsigned short FORMAS[5] =
 {
-    0x0F00, // Tipo 0 (I)
-    0x0660, // Tipo 1 (O)
-    0xE400, // Tipo 2 (T)
-    0x8E00, // Tipo 3 (J)
-    0x2E00  // Tipo 4 (L)
+    0x0F00, // Tipo 0 (I) 0000 1111 0000 0000
+    0x0660, // Tipo 1 (O) 0000 0110 0110 0000
+    0xE400, // Tipo 2 (T) 1110 0100 0000 0000
+    0x8E00, // Tipo 3 (J) 1000 1110 0000 0000
+    0x2E00  // Tipo 4 (L) 0010 1110 0000 0000
 };
 
 Pieza* generarPiezaAleatoria(int anchoTablero)

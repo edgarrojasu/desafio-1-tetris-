@@ -17,59 +17,68 @@ int main()
 
     Tablero* miTablero = crearTablero(ancho, alto);
     Pieza* piezaActual = generarPiezaAleatoria(ancho);
-    piezaActual->y = -1;
 
     char entrada = ' ';
     bool jugando = true;
 
     while (jugando)
     {
-        system("cls");
-
         imprimirTodo(miTablero, piezaActual);
-
-        cout << "Pieza actual tipo: " << piezaActual->tipo << " en X: " << piezaActual->x << endl;
-
         cin >> entrada;
         entrada = toupper(entrada);
 
         switch (entrada)
         {
-            case 'A':
-            {
-                piezaActual->x--;
-                if (!validarPosicion(miTablero, piezaActual))
-                    piezaActual->x++;
-                break;
-            }
-            case 'D':
-            {
+        case 'A':
+        {
+            piezaActual->x--;
+            if (!validarPosicion(miTablero, piezaActual))
                 piezaActual->x++;
-                if (!validarPosicion(miTablero, piezaActual))
+            break;
+        }
+        case 'D':
+        {
+            piezaActual->x++;
+            if (!validarPosicion(miTablero, piezaActual))
                 piezaActual->x--;
-                break;
-            }
-            case 'W':
-            {
-                unsigned short formaAnterior = piezaActual->forma;
-                rotarPieza(piezaActual);
-                if (!validarPosicion(miTablero, piezaActual))
+            break;
+        }
+        case 'W':
+        {
+            unsigned short formaAnterior = piezaActual->forma;
+            rotarPieza(piezaActual);
+            if (!validarPosicion(miTablero, piezaActual))
                 piezaActual->forma = formaAnterior;
-                break;
-            }
-            case 'S':
+            break;
+        }
+        case 'S':
+        {
+            piezaActual->y++;
+            if (!validarPosicion(miTablero, piezaActual))
             {
-                piezaActual->y++;
+                piezaActual->y--;
+                fijarPieza(miTablero, piezaActual);
+                limpiarFilas(miTablero);
+                delete piezaActual;
+                piezaActual = generarPiezaAleatoria(ancho);
+                piezaActual->y = -1;
+
                 if (!validarPosicion(miTablero, piezaActual))
-                    piezaActual->y--;
-                break;
+                {
+                    system("cls");
+                    imprimirTablero(miTablero);
+                    cout << endl;
+                    imprimirGameOver(miTablero);
+                    jugando = false;
+                }
             }
-            case 'Q': jugando = false; break;
-            default: break;
+            break;
         }
 
+        case 'Q': jugando = false; break;
+        default: break;
+        }
     }
-
     liberarTablero(miTablero);
     delete piezaActual;
 

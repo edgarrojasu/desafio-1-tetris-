@@ -8,8 +8,13 @@ int altura()
     int alto;
     while(true)
     {
-        cout << "Alto: ";
-        cin >> alto;
+        cout << "Alto (numero mayor a 8: ";
+        while (!(cin >> alto))
+        {
+            cout<<"ingrese un numero entero"<<endl;
+            cin.clear();
+            cin.ignore(10000,'\n');
+        }
         if (alto>=8)
         {
             return alto;
@@ -27,7 +32,12 @@ int anchura()
     while(true)
     {
         cout << "Ancho (multiplo de 8): ";
-        cin >> ancho;
+        while (!(cin >> ancho))
+        {
+            cout<<"ingrese un numero entero"<<endl;
+            cin.clear();
+            cin.ignore(10000,'\n');
+        }
         if (ancho%8==0)
         {
             return ancho;
@@ -101,7 +111,7 @@ void imprimirTablero(Tablero* t)
 
 void imprimirTodo(Tablero* t, Pieza* p) {
     system("cls");
-        cout << "Controles: [A] Izq, [D] Der, [S] Bajar, [W] Rotar, [Q] Salir" << endl;
+    cout << "Controles: [A] Izq, [D] Der, [S] Bajar, [W] Rotar, [Q] Salir"<<endl;
 
     for (int i = 0; i < t->alto; i++)
     {
@@ -172,4 +182,73 @@ bool validarPosicion(Tablero* t, Pieza* p)
         }
     }
     return true;
+}
+
+void fijarPieza(Tablero* t, Pieza* p)
+{
+    for (int f = 0; f < 4; f++)
+    {
+        for (int c = 0; c < 4; c++)
+        {
+            if ((p->forma >> (15 - (f*4+c))) & 1)
+            {
+                int filaGlobal = p->y + f;
+                int colGlobal  = p->x + c;
+                if (filaGlobal >= 0 && filaGlobal < t->alto &&
+                    colGlobal  >= 0 && colGlobal  < t->ancho)
+                {
+                    int byteIdx = colGlobal / 8;
+                    int bitIdx  = 7 - (colGlobal % 8);
+                    t->matriz[filaGlobal][byteIdx] |= (1 << bitIdx);
+                }
+            }
+        }
+    }
+}
+
+void limpiarFilas(Tablero* t)
+{
+    for (int i = t->alto - 1; i >= 0; i--)
+    {
+        bool filaCompleta = true;
+        for (int j = 0; j < t->bytesPorFila; j++)
+        {
+            if (t->matriz[i][j] != 0xFF)
+            {
+                filaCompleta = false;
+                break;
+            }
+        }
+
+        if (filaCompleta)
+        {
+            delete[] t->matriz[i];
+
+            for (int k = i; k > 0; k--)
+            {
+                t->matriz[k] = t->matriz[k-1];
+            }
+
+            t->matriz[0] = new unsigned char[t->bytesPorFila];
+            for (int j = 0; j < t->bytesPorFila; j++)
+            {
+                t->matriz[0][j] = 0;
+            }
+
+            i++;
+        }
+    }
+}
+
+void imprimirGameOver(Tablero* t)
+{
+    system("cls");
+    imprimirTablero(t);
+    cout << endl;
+    cout << "+----------------------+" << endl;
+    cout << "|      GAME  OVER      |" << endl;
+    cout << "|   el tablero llego   |" << endl;
+    cout << "|      hasta arriba    |" << endl;
+    cout << "+----------------------+" << endl;
+    cout << endl;
 }
